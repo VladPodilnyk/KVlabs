@@ -24,7 +24,16 @@ class Model:
     def delete_session(self, key, value):
         self.__session_lst = filter(lambda element: element['key'] != value, self.__session_lst)
 
+    def del_session_rec(self, id, name):
+        self.__session_lst = filter(lambda x: x['id'] != id and x['name'] != name, self.__session_lst)
+
+    def del_session(self, id):
+        self.__session_lst = filter(lambda x: x['id'] != id, self.__session_lst)
 
 
-    #def delete_session(arg):
-        #pass
+    def delete_cinema(self, id):
+        self.delete_session('cinema_id', id)
+        self.__cinema_lst = filter(lambda element: element['id'] != id, self.__cinema_lst)
+
+
+    
