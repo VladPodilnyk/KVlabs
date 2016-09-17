@@ -61,4 +61,4 @@ class Model:
         evening_sessions = filter(lambda element: int(element['time'].split(':')[1]) > time, self.__session_lst)
         return [i for i in self.__cinema_lst for j in self.__session_lst if i['id'] == j['cinema_id']]
 
-    def 
+    
