@@ -20,7 +20,8 @@ class View:
         print '1) Add cinema\n \
                2) Remove cinema\n \
                3) Update\n \
-               4) Back\n'
+               4) Display cinema after specific time\n \
+               5) Back\n'
 
     @staticmethod
     def sessions_menu():
@@ -43,7 +44,7 @@ class View:
         print '1) Name\n \
                2) Time\n \
                3) Cost\n \
-               4) Available seats\n'
+               4) Back\n'
 
     @staticmethod
     def success_message(message):
@@ -51,4 +52,4 @@ class View:
 
     @staticmethod
     def error_message(message):
-        print 'ERROR: ' + message
+        print '[ERROR]: ' + message
