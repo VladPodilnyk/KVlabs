@@ -40,7 +40,7 @@ class Model:
         if self.__cinema_lst == []:
             id = 0
         else:
-            id = self.__cinema_lst[-1]['id'] += 1
+            id = self.__cinema_lst[-1]['id'] + 1
 
         self.__cinema_lst.append({'id': id, 'name': name, 'street': street})
 
@@ -50,10 +50,10 @@ class Model:
         if is_cinema_exist == []:
             raise Exception('Incorrect cinema_id.')
 
-        if self.__session_lst = []:
+        if self.__session_lst == []:
             id = 0
         else:
-            id = self.__session_lst[-1]['id'] +=1
+            id = self.__session_lst[-1]['id'] + 1
 
         self.__session_lst.append({'id': id, 'name': name, 'time': time, 'cost': cost, 'cinema_id': cinema_id})
 
@@ -84,7 +84,7 @@ class Model:
         return self.__cinema_lst
 
     def get_sessions(self):
-        pass self.__session_lst
+        return self.__session_lst
 
     def is_time_correct(self, time):
         if ':' not in time:
@@ -96,7 +96,7 @@ class Model:
         except ValueError:
             raise Exception('Incorrect record')
 
-        if (hour => 0 and hour <= 23) and (minutes => 0 and minutes <= 59 ):
+        if (hour >= 0 and hour <= 23) and (minutes >= 0 and minutes <= 59 ):
             return True
         else:
             raise Exception('Incorrect record')

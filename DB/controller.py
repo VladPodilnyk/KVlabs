@@ -9,6 +9,7 @@ class Controller:
     def __cinema_controller(self):
         choice = -1
         while choice != 6:
+            View.cinemas_menu()
             try:
                 choice = int(raw_input('Enter menu item:\n'))
             except ValueError:
@@ -46,6 +47,7 @@ class Controller:
     def __session_controller(self):
         choice = -1
         while choice != 4:
+            View.sessions_menu()
             try:
                 choice = int(raw_input('Enter menu item:\n'))
             except ValueError:
@@ -87,84 +89,89 @@ class Controller:
 
             raw_input('Press -->Enter...')
 
-        def __cinema_update_controller(self):
-            choice = -1
-            while choice != 3:
+    def __cinema_update_controller(self):
+        choice = -1
+        while choice != 3:
+            View.cinemas_update_menu()
+            try:
+                id = int('Enter id:\n')
+                choice = int(raw_input('Enter menu item:\n'))
+            except ValueError:
+                View.error_message('Incorrect value')
+
+            if  not self.model.is_exist(id, self.get_cinemas()):
+                View.error_message('Incorrect id')
+                return
+
+            if choice == 1:
+                name = raw_input('Enter new cinema name:\n')
+                self.model.cinema_update(id, 'name', name)
+                View.success_message('Item successfuly updated!!!')
+
+            elif choice == 2:
+                street = raw_input('Enter new street:\n')
+                self.model.cinema_update(id, 'street', street)
+                View.success_message('Item successfuly updated!!!')
+
+            raw_input('Press -->Enter...')
+
+    def __session_update_controller(self):
+        choice = -1
+        while choice != 3:
+            View.sessions_update_menu()
+            try:
+                id = int('Enter id:\n')
+                choice = int(raw_input('Enter menu item:\n'))
+            except ValueError:
+                View.error_message('Incorrect value')
+
+            if  not self.model.is_exist(id, self.get_sessions()):
+                View.error_message('Incorrect id')
+                return
+
+            if choice == 1:
+                name = raw_input('Enter new session name:\n')
+                self.model.session_update(id, 'name', name)
+                View.success_message('Item successfuly updated!!!')
+
+            elif choice == 2:
                 try:
-                    id = int('Enter id:\n')
-                    choice = int(raw_input('Enter menu item:\n'))
+                    time = raw_input('Enter time:\n')
+                    self.model.is_time_correct(time)
+                except Exception as e:
+                    View.error_message(e.message)
+
+                self.model.session_update(id, 'time', time)
+                View.success_message('Item successfuly updated!!!')
+
+            elif choice == 3:
+                try:
+                    name = float(raw_input('Enter cost:\n'))
                 except ValueError:
                     View.error_message('Incorrect value')
 
-                if  not self.model.is_exist(id, self.get_cinemas()):
-                    View.error_message('Incorrect id')
-                    return
+                self.model.session_update(id, 'cost', name)
+                View.success_message('Item successfuly updated!!!')
 
-                if choice == 1:
-                    name = raw_input('Enter new cinema name:\n')
-                    self.model.cinema_update(id, 'name', name)
-                    View.success_message('Item successfuly updated!!!')
+            raw_input('Press -->Enter...')
 
-                elif choice == 2:
-                    street = raw_input('Enter new street:\n')
-                    self.model.cinema_update(id, 'street', street)
-                    View.success_message('Item successfuly updated!!!')
+    def run(self):
+        choice = -1
+        while choice != 3:
+            View.data_base_menu()
+            try:
+                choice = int(raw_input('Enter menu item:\n'))
+            except ValueError:
+                View.error_message('Incorrect value')
 
-                raw_input('Press -->Enter...')
+            if choice == 1:
+                self.__cinema_controller()
 
-        def __session_update_controller(self):
-            choice = -1
-            while choice != 3:
-                try:
-                    id = int('Enter id:\n')
-                    choice = int(raw_input('Enter menu item:\n'))
-                except ValueError:
-                    View.error_message('Incorrect value')
+            elif choice == 2:
+                self.__session_controller()
 
-                if  not self.model.is_exist(id, self.get_sessions()):
-                    View.error_message('Incorrect id')
-                    return
-
-                if choice == 1:
-                    name = raw_input('Enter new session name:\n')
-                    self.model.session_update(id, 'name', name)
-                    View.success_message('Item successfuly updated!!!')
-
-                elif choice == 2:
-                    try:
-                        time = raw_input('Enter time:\n')
-                        self.model.is_time_correct(time)
-                    except Exception as e:
-                        View.error_message(e.message)
-
-                    self.model.session_update(id, 'time', time)
-                    View.success_message('Item successfuly updated!!!')
-
-                elif choice == 3:
-                    try:
-                        name = float(raw_input('Enter cost:\n'))
-                    except ValueError:
-                        View.error_message('Incorrect value')
-
-                    self.model.session_update(id, 'cost', name)
-                    View.success_message('Item successfuly updated!!!')
-
-                raw_input('Press -->Enter...')
-
-            def run(self):
-                choice = -1
-                while choice != 3:
-                    try:
-                        choice = int(raw_input('Enter menu item:\n'))
-                    except ValueError:
-                        View.error_message('Incorrect value')
-
-                    if choice == 1:
-                        self.model.__cinema_controller()
-
-                    elif choice == 2:
-                        self.model.__session_controller()
-
-                    raw_input('Press -->Enter...')
-
-                self.model.save('data.txt')
+        raw_input('Press -->Enter...')
+        try:
+            self.model.save('data.txt')
+        except NameError:
+            pass

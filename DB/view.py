@@ -1,8 +1,8 @@
 class View:
     @staticmethod
     def data_base_menu():
-        print 'Data base menu\n'
-        print 'Choose one of the following items\n'
+        print 'Data base menu\n--------------'
+        print 'Choose one of the following items:'
         print '1) Cinemas menu'
         print '2) Sessions menu'
         print '3) Exit'
@@ -16,37 +16,23 @@ class View:
 
     @staticmethod
     def cinemas_menu():
-        print 'Cinemas menu\n\n'
-        print '1) Add cinema\n \
-               2) Delete cinema\n \
-               3) Update\n \
-               4) Display cinema after specific time\n \
-               5) Display\n \
-               6) Back\n'
+        print 'Cinemas menu'
+        print '1) Add cinema\n2) Delete cinema\n3) Update\n4) Display cinema after specific time\n5) Display\n6) Back\n'
 
     @staticmethod
     def sessions_menu():
-        print 'Sessions menu\n\n'
-        print '1) Add session\n \
-               2) Delete session\n \
-               3) Update\n \
-               4) Display\n \
-               5) Back\n'
+        print 'Sessions menu'
+        print '1) Add session\n2) Delete session\n3) Update\n4) Display\n5) Back\n'
 
     @staticmethod
     def cinemas_update_menu():
-        print 'Cinema update menu\n\n'
-        print '1) Name\n \
-               2) Street\n \
-               3) Back\n'
+        print 'Cinema update menu'
+        print '1) Name\n2) Street\n3) Back\n'
 
     @staticmethod
     def sessions_update_menu():
-        print 'Session update menu\n\n'
-        print '1) Name\n \
-               2) Time\n \
-               3) Cost\n \
-               4) Back\n'
+        print 'Session update menu'
+        print '1) Name\n2) Time\n3) Cost\n4) Back\n'
 
     @staticmethod
     def success_message(message):
