@@ -18,7 +18,7 @@ class View:
     def cinemas_menu():
         print 'Cinemas menu\n\n'
         print '1) Add cinema\n \
-               2) Remove cinema\n \
+               2) Delete cinema\n \
                3) Update\n \
                4) Display cinema after specific time\n \
                5) Back\n'
@@ -27,7 +27,7 @@ class View:
     def sessions_menu():
         print 'Sessions menu\n\n'
         print '1) Add session\n \
-               2) Remove session\n \
+               2) Delete session\n \
                3) Update\n \
                4) Back\n'
 

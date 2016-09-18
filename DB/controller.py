@@ -24,8 +24,10 @@ class Controller:
                     id = int(raw_input('Enter id:\n'))
                 except ValueError:
                     View.error_message('Incorrect value\n')
+
                 if not  self.model.is_exist(id, self.model.get_cinemas()):
-                    raise Exception('Incorrect id')
+                    View.error_message('Incorrect id')
+                    return
 
                 self.model.delete_cinema(id)
                 View.success_message('Item successfuly deleted!!!')
@@ -47,10 +49,37 @@ class Controller:
                 View.error_message('Incorrect value\n')
 
             if choice == 1:
-                pass
+                try:
+                    name = raw_input('Enter session name:\n')
+                    cost = float(raw_input('Enter session cost:\n'))
+                    cinema_id = int(raw_input('Enter cinema_id:\n'))
+                    time = raw_input('Enter time(hour:minutes):\n')
+                    self.model.is_time_correct(time)
+                    self.model.add_session(name, time, cost, cinema_id)
+                except ValueError:
+                    View.error_message('Incorrect value')
+                except Exception as e:
+                    View.error_message(e.message)
+
+                View.success_message('Item successfuly added!!!')
+
             elif choice == 2:
-                pass
+                try:
+                    id = int(raw_input('Enter id:\n'))
+                except ValueError:
+                    View.error_message('Incorrect value')
+
+                if not self.model.is_exist(id, self.get_sessions()):
+                    View.error_message('Incorrect id')
+                    return
+
+                self.model.del_session(id)
+                View.success_message('Item successfuly deleted')
+
             elif choice == 3:
-                pass
+                self.__session_update_controller()
 
             raw_input('Press -->Enter...')
+
+        def __cinema_update_controller(self):
+            pass
