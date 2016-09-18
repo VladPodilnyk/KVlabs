@@ -21,7 +21,8 @@ class View:
                2) Delete cinema\n \
                3) Update\n \
                4) Display cinema after specific time\n \
-               5) Back\n'
+               5) Display\n \
+               6) Back\n'
 
     @staticmethod
     def sessions_menu():
@@ -29,7 +30,8 @@ class View:
         print '1) Add session\n \
                2) Delete session\n \
                3) Update\n \
-               4) Back\n'
+               4) Display\n \
+               5) Back\n'
 
     @staticmethod
     def cinemas_update_menu():
