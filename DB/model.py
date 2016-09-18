@@ -61,4 +61,27 @@ class Model:
         evening_sessions = filter(lambda element: int(element['time'].split(':')[1]) > time, self.__session_lst)
         return [i for i in self.__cinema_lst for j in self.__session_lst if i['id'] == j['cinema_id']]
 
-    
+    def is_exist(self, id, lst):
+        item = filter(lambda x: x['id'] == id, lst)
+        if item:
+            return True
+        return False
+
+    def __find(self, id, lst):
+        for item in lst:
+            if item['id'] == id:
+                return lst.index(item)
+
+    def cinema_update(self, id, key, value):
+        indx = self.__find(id, __cinema_lst)
+        self.__cinema_lst[indx][key] = value
+
+    def session_update(self, id, key, value):
+        indx = self.__find(id, __session_lst)
+        self.__session_lst[indx][key] = value
+
+    def get_cinemas(self):
+        return self.__cinema_lst
+
+    def get_sessions(self):
+        pass self.__session_lst
