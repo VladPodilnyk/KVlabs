@@ -18,7 +18,7 @@ class Model:
 
     def save(self, file_name):
         with open(file_name, 'wb') as f:
-            pickle.dump([__cinema_lst, __session_lst], f)
+            pickle.dump([self.__cinema_lst, self.__session_lst], f)
 
 
     def delete_session(self, key, value):
@@ -73,11 +73,11 @@ class Model:
                 return lst.index(item)
 
     def cinema_update(self, id, key, value):
-        indx = self.__find(id, __cinema_lst)
+        indx = self.__find(id, self.__cinema_lst)
         self.__cinema_lst[indx][key] = value
 
     def session_update(self, id, key, value):
-        indx = self.__find(id, __session_lst)
+        indx = self.__find(id, self.__session_lst)
         self.__session_lst[indx][key] = value
 
     def get_cinemas(self):

@@ -46,7 +46,7 @@ class Controller:
 
     def __session_controller(self):
         choice = -1
-        while choice != 4:
+        while choice != 5:
             View.sessions_menu()
             try:
                 choice = int(raw_input('Enter menu item:\n'))
@@ -74,7 +74,7 @@ class Controller:
                 except ValueError:
                     View.error_message('Incorrect value')
 
-                if not self.model.is_exist(id, self.get_sessions()):
+                if not self.model.is_exist(id, self.model.get_sessions()):
                     View.error_message('Incorrect id')
                     return
 
@@ -91,17 +91,21 @@ class Controller:
 
     def __cinema_update_controller(self):
         choice = -1
+        try:
+            id = int(raw_input('Enter id:\n'))
+        except ValueError:
+            View.error_message('Incorrect value')
+
+        if  not self.model.is_exist(id, self.model.get_cinemas()):
+            View.error_message('Incorrect id')
+            return
+
         while choice != 3:
             View.cinemas_update_menu()
             try:
-                id = int('Enter id:\n')
                 choice = int(raw_input('Enter menu item:\n'))
             except ValueError:
                 View.error_message('Incorrect value')
-
-            if  not self.model.is_exist(id, self.get_cinemas()):
-                View.error_message('Incorrect id')
-                return
 
             if choice == 1:
                 name = raw_input('Enter new cinema name:\n')
@@ -117,17 +121,21 @@ class Controller:
 
     def __session_update_controller(self):
         choice = -1
+        try:
+            id = int(raw_input('Enter id:\n'))
+        except ValueError:
+            View.error_message('Incorrect value')
+
+        if  not self.model.is_exist(id, self.model.get_sessions()):
+            View.error_message('Incorrect id')
+            return
+
         while choice != 3:
             View.sessions_update_menu()
             try:
-                id = int('Enter id:\n')
                 choice = int(raw_input('Enter menu item:\n'))
             except ValueError:
                 View.error_message('Incorrect value')
-
-            if  not self.model.is_exist(id, self.get_sessions()):
-                View.error_message('Incorrect id')
-                return
 
             if choice == 1:
                 name = raw_input('Enter new session name:\n')
@@ -171,7 +179,4 @@ class Controller:
                 self.__session_controller()
 
         raw_input('Press -->Enter...')
-        try:
-            self.model.save('data.txt')
-        except NameError:
-            pass
+        self.model.save('data.txt')

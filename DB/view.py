@@ -10,7 +10,7 @@ class View:
     @staticmethod
     def display(lst):
         for element in lst:
-            print '\n'.join(map(lambda key: key + ' : ' + element[key]), element.keys())
+            print '\n'.join(map(lambda key: key + ' : ' + str(element[key]), element.keys()))
             print '\n'
 
 
@@ -36,8 +36,8 @@ class View:
 
     @staticmethod
     def success_message(message):
-        print message
+        print message + '\n'
 
     @staticmethod
     def error_message(message):
-        print '[ERROR]: ' + message
+        print '[ERROR]: ' + message + '\n'
