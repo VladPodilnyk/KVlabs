@@ -42,7 +42,7 @@ class Controller:
             elif choice == 5:
                 View.display(self.model.get_cinemas())
 
-        raw_input('Press -->Enter...')
+        raw_input('Press -->Enter...\n')
 
     def __session_controller(self):
         choice = -1
@@ -61,12 +61,11 @@ class Controller:
                     time = raw_input('Enter time(hour:minutes):\n')
                     self.model.is_time_correct(time)
                     self.model.add_session(name, time, cost, cinema_id)
+                    View.success_message('Item successfuly added!!!')
                 except ValueError:
                     View.error_message('Incorrect value')
                 except Exception as e:
                     View.error_message(e.message)
-
-                View.success_message('Item successfuly added!!!')
 
             elif choice == 2:
                 try:
@@ -87,7 +86,7 @@ class Controller:
             elif choice == 4:
                 View.display(self.model.get_sessions())
 
-        raw_input('Press -->Enter...')
+        raw_input('Press -->Enter...\n')
 
     def __cinema_update_controller(self):
         choice = -1
@@ -117,7 +116,7 @@ class Controller:
                 self.model.cinema_update(id, 'street', street)
                 View.success_message('Item successfuly updated!!!')
 
-            raw_input('Press -->Enter...')
+            raw_input('Press -->Enter...\n')
 
     def __session_update_controller(self):
         choice = -1
@@ -130,7 +129,7 @@ class Controller:
             View.error_message('Incorrect id')
             return
 
-        while choice != 3:
+        while choice != 4:
             View.sessions_update_menu()
             try:
                 choice = int(raw_input('Enter menu item:\n'))
@@ -146,22 +145,20 @@ class Controller:
                 try:
                     time = raw_input('Enter time:\n')
                     self.model.is_time_correct(time)
+                    self.model.session_update(id, 'time', time)
+                    View.success_message('Item successfuly updated!!!')
                 except Exception as e:
                     View.error_message(e.message)
 
-                self.model.session_update(id, 'time', time)
-                View.success_message('Item successfuly updated!!!')
-
             elif choice == 3:
                 try:
-                    name = float(raw_input('Enter cost:\n'))
+                    cost = float(raw_input('Enter cost:\n'))
+                    self.model.session_update(id, 'cost', cost)
+                    View.success_message('Item successfuly updated!!!')
                 except ValueError:
                     View.error_message('Incorrect value')
 
-                self.model.session_update(id, 'cost', name)
-                View.success_message('Item successfuly updated!!!')
-
-            raw_input('Press -->Enter...')
+            raw_input('Press -->Enter...\n')
 
     def run(self):
         choice = -1
