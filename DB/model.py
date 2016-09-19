@@ -58,7 +58,7 @@ class Model:
         self.__session_lst.append({'id': id, 'name': name, 'time': time, 'cost': cost, 'cinema_id': cinema_id})
 
     def cinema_time(self, hour):
-        evening_sessions = filter(lambda element: int(element['time'].split(':')[0]) > time, self.__session_lst)
+        evening_sessions = filter(lambda element: int(element['time'].split(':')[0]) > hour, self.__session_lst)
         return [i for i in self.__cinema_lst for j in self.__session_lst if i['id'] == j['cinema_id']]
 
     def is_exist(self, id, lst):

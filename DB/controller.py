@@ -37,12 +37,12 @@ class Controller:
                 self.__cinema_update_controller()
 
             elif choice == 4:
-                self.model.cinema_time(18)
+                View.display(self.model.cinema_time(18))
 
             elif choice == 5:
                 View.display(self.model.get_cinemas())
 
-            raw_input('Press -->Enter...')
+        raw_input('Press -->Enter...')
 
     def __session_controller(self):
         choice = -1
@@ -87,7 +87,7 @@ class Controller:
             elif choice == 4:
                 View.display(self.model.get_sessions())
 
-            raw_input('Press -->Enter...')
+        raw_input('Press -->Enter...')
 
     def __cinema_update_controller(self):
         choice = -1
