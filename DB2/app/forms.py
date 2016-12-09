@@ -1,36 +1,23 @@
-from .data_base import Order, Product, Stock, Client
+from .data_base import Order, Stock, Client, Product
 from django import forms
+
+order = Order()
+client = Client()
+product = Product()
 
 
 class OrderForm(forms.Form):
-    id = forms.IntegerField(label='ID')
-    product_id = forms.CharField(label='ProductID')
-    client_id = forms.CharField(label='ClientID')
-    date_time = forms.DateTimeField(label='Date&Time')
-    amount = forms.ImageField(label='Amount')
+    product_id = forms.IntegerField(label='ProductID')
+    client_id = forms.IntegerField(label='ClientID')
+    data_time = forms.DateTimeField(label='DateTime')
+    amount = forms.IntegerField(label='Amount')
 
 
-class StockForm(forms.Form):
-    id = forms.IntegerField(label='ID')
-    name = forms.CharField(label='Name', max_length=50)
-    location = forms.CharField(label='Location', max_length=50)
-    type = forms.CharField(label='Type', max_length=50)
-    max_capacity = forms.ImageField(label='Capacity')
-
-
-class ProductForm(forms.Form):
-    id = forms.IntegerField(label='ID')
-    name = forms.CharField(label='Name', max_length=50)
-    type = forms.CharField(label='Type', max_length=50)
-    cost = forms.IntegerField(label='Cost')
-    num_of = forms.IntegerField(label='Amount')
-    stock_id = forms.IntegerField(label='StockID')
-
-
-class ClientForm(forms.Form):
-    id = forms.IntegerField(label='ID')
-    name = forms.CharField(label='Name', max_length=50)
-    company = forms.CharField(label='Name', max_length=100)
+class NewRecordForm(forms.Form):
+    product_id = forms.ChoiceField(label='Product', choices=product.get_choice_lst())
+    client_id = forms.ChoiceField(label='Client', choices=client.get_choice_lst())
+    data_time = forms.DateTimeField(label='DateTime')
+    amount = forms.IntegerField(label='Amount')
 
 
 
