@@ -26,18 +26,27 @@ def order_list(request):
 def edit(request, order_id):
 
     if request.method == 'POST':
+
+        prod_id = request.POST["product_id"]
+        table_row = product.select_by_id(prod_id)[0]
+
         if 'delete_btn' in request.POST:
+            table_row["amount"] += int(request.POST["amount"])
             order.delete_by_id(order_id)
+            product.update(prod_id, table_row)
             messages.add_message(request, messages.SUCCESS, 'Order was successfully deleted')
-            return HttpResponseRedirect('')
+            return HttpResponseRedirect('/')
 
         order_form = OrderForm(request.POST)
 
-        if order_form.is_valid():
+        if order_form.is_valid() and (int(request.POST["amount"]) <= table_row["amount"]):
             data = {"product_id": request.POST["product_id"], "client_id": request.POST["client_id"],
                     "data_time": request.POST["data_time"], "amount": request.POST["amount"]}
 
+            table_row["amount"] += order.select_by_id(order_id)[0]["amount"]
+            table_row["amount"] -= int(request.POST["amount"])
             order.update(order_id, data)
+            product.update(prod_id, table_row)
             messages.add_message(request, messages.SUCCESS, 'Doctor object updated successfully')
             return HttpResponseRedirect('/')
 
@@ -49,10 +58,14 @@ def edit(request, order_id):
 def make_new_order(request):
     new_record_form = NewRecordForm(request.POST)
     if request.method == 'POST':
-        if new_record_form.is_valid():
+        prod_id = request.POST["product_id"]
+        new_rec = product.select_by_id(prod_id)[0]
+        if new_record_form.is_valid() and (int(request.POST["amount"]) <= new_rec["amount"]):
             data = {"product_id": request.POST["product_id"], "client_id": request.POST["client_id"],
                     "data_time": request.POST["data_time"], "amount": request.POST["amount"]}
             order.insert(data)
+            new_rec['amount'] -= int(request.POST['amount'])
+            product.update(prod_id, new_rec)
             return HttpResponseRedirect('/')
 
     form = NewRecordForm()
