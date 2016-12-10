@@ -20,7 +20,25 @@ def index(request):
 
 
 def order_list(request):
-    return render(request, "order_list.html", {"orders": order.fetch_all()})
+
+    if ('search' in request.GET) and (request.GET != ''):
+        key_words = request.GET['search']
+        condition = "WHERE MATCH (name) AGAINST ('"
+        if request.GET.get('optradio', None) == 'include':
+            key_words = " ".join(['+' + item for item in key_words.split()])
+            condition += key_words
+        else:
+            condition += "\"" + key_words + "\""
+
+        condition += "' IN BOOLEAN MODE);"
+        clients = client.full_text_search(condition)
+        result = tuple()
+        for record in clients:
+            result += order.select_from("WHERE client_id=" + str(record["id"]))
+    else:
+        result = order.fetch_all()
+
+    return render(request, "order_list.html", {"orders": result})
 
 
 def edit(request, order_id):
@@ -47,7 +65,7 @@ def edit(request, order_id):
             table_row["amount"] -= int(request.POST["amount"])
             order.update(order_id, data)
             product.update(prod_id, table_row)
-            messages.add_message(request, messages.SUCCESS, 'Doctor object updated successfully')
+            messages.add_message(request, messages.SUCCESS, 'Order object updated successfully')
             return HttpResponseRedirect('/')
 
     record = order.select_by_id(order_id)[0]

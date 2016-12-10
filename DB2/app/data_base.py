@@ -1,5 +1,4 @@
 import MySQLdb as mdb
-import csv
 
 
 class AbstractClass(object):
@@ -102,8 +101,8 @@ class AbstractClass(object):
         try:
             connection = mdb.connect('localhost', 'root', 'vlad40000', 'vpdb')
             cursor = connection.cursor(mdb.cursors.DictCursor)
-            cursor.execute('SELECT FROM ' + self.__table_name + ' ' + condition)
-            cursor.fetchall()
+            cursor.execute('SELECT * FROM ' + self.__table_name + ' ' + condition)
+            return cursor.fetchall()
         except mdb.Error as e:
             print 'ERROR %d %s' % (e.args[0], e.args[1])
         finally:
