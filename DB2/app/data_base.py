@@ -45,7 +45,7 @@ class AbstractClass(object):
             values = "VALUES("
             for item in self.__columns_name:
                 request += item + ","
-                values += str(new_data[item]) + ","
+                values += "'" + str(new_data[item]) + "'" + ","
 
             request = request[:-1] + ")"
             values = values[:-1] + ")"
@@ -134,7 +134,7 @@ class Order(AbstractClass):
 class Product(AbstractClass):
 
     def __init__(self):
-        columns = ['name', 'location', 'type', 'capacity']
+        columns = ['name', 'type', 'cost', 'amount', 'stock_id']
         table_name = 'product'
         super(Product, self).__init__(table_name, columns)
 
@@ -157,7 +157,7 @@ class Product(AbstractClass):
 class Stock(AbstractClass):
 
     def __init__(self):
-        columns = ['name', 'type', 'cost', 'amount', 'stock_id']
+        columns = ['name', 'location', 'type', 'capacity']
         table_name = 'stock'
         super(Stock, self).__init__(table_name, columns)
 
