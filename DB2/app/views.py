@@ -27,16 +27,36 @@ def order_list(request):
         if request.GET.get('optradio', None) == 'include':
             key_words = " ".join(['+' + item for item in key_words.split()])
             condition += key_words
+        elif request.GET.get('optradio', None) == 'cost':
+            ids = product.get_id_by_cost(key_words)
+            result = tuple()
+            for item in ids:
+                result += order.select_by_id(item)
+
+        elif request.GET.get('optradio', None) == 'company':
+            ids = client.get_id_by_company(key_words)
+            result = tuple()
+            for item in ids:
+                result += order.select_by_id(item)
+
         else:
             condition += "\"" + key_words + "\""
 
-        condition += "' IN BOOLEAN MODE);"
-        clients = client.full_text_search(condition)
-        result = tuple()
-        for record in clients:
-            result += order.select_from("WHERE client_id=" + str(record["id"]))
+        if request.GET.get('optradio', None) == 'include' or request.GET.get('optradio', None) == 'exclude':
+            condition += "' IN BOOLEAN MODE);"
+            clients = client.full_text_search(condition)
+            result = tuple()
+            for record in clients:
+                result += order.select_from("WHERE client_id=" + str(record["id"]))
     else:
         result = order.fetch_all()
+
+    client_name = [client.select_by_id(res["client_id"])[0]["name"] for res in result]
+    product_name = [product.select_by_id(res["product_id"])[0]["name"] for res in result]
+
+    for item, name, prod in zip(result, client_name, product_name):
+        item["client_name"] = name
+        item["prod_name"] = prod
 
     return render(request, "order_list.html", {"orders": result})
 

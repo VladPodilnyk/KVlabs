@@ -152,6 +152,9 @@ class Product(AbstractClass):
     def get_choice_lst(self):
         return tuple(tuple([item['id'], item['name']]) for item in self.fetch_all())
 
+    def get_id_by_cost(self, cost):
+        return [item["id"] for item in self.select_from("WHERE cost=" + str(cost))]
+
 
 class Stock(AbstractClass):
 
@@ -194,3 +197,6 @@ class Client(AbstractClass):
 
     def get_choice_lst(self):
         return tuple(tuple([item['id'], item['name']]) for item in self.fetch_all())
+
+    def get_id_by_company(self, company_name):
+        return [item["id"] for item in self.select_from("WHERE company=" + "'" + company_name + "'")]
