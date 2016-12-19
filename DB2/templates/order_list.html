@@ -2,13 +2,9 @@
  <html>
         <head>
             <title>SuperDelivery</title>
-            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-            <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
             <script src="{% static "jquery-2.2.4.min.js" %}"></script>
             <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
             <link href="{% static "css/bootstrap-theme.min.css" %}" rel="stylesheet">
-            <link href="{% static "css/core.css" %}" rel="stylesheet">
 
     <script src="{% static "js/bootstrap.min.js" %}"></script>
         </head>
@@ -34,8 +30,14 @@
                     <label class="radio-inline">
                             <input type="radio" name="optradio" value="include" checked="">Include word
                         </label>
-                        <label class="radio-inline">
+                    <label class="radio-inline">
                             <input type="radio" name="optradio" value="exclude" > by phrase
+                        </label>
+                    <label class="radio-inline">
+                            <input type="radio" name="optradio" value="cost" > by cost
+                        </label>
+                    <label class="radio-inline">
+                            <input type="radio" name="optradio" value="company" > by company
                         </label>
 
                 </form>
@@ -61,8 +63,8 @@
                     {% for order in orders %}
                         <tr class='clickable-row' data-href="{% url 'edit' order.id %}">
                             <td>{{ order.id }}</td>
-                            <td>{{ order.product_id }}</td>
-                            <td>{{ order.client_id }}</td>
+                            <td>{{ order.prod_name }}</td>
+                            <td>{{ order.client_name }}</td>
                             <td>{{ order.data_time }}</td>
                             <td>{{ order.amount }}</td>
                         </tr>
