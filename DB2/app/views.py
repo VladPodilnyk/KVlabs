@@ -28,16 +28,25 @@ def order_list(request):
             key_words = " ".join(['+' + item for item in key_words.split()])
             condition += key_words
         elif request.GET.get('optradio', None) == 'cost':
-            ids = product.get_id_by_cost(key_words)
-            result = tuple()
-            for item in ids:
-                result += order.select_by_id(item)
+            key_words = key_words.strip(" ").split(" ")
+            from_value = key_words[1]
+            to_value = key_words[3]
+            if from_value and to_value and int(from_value) <= int(to_value):
+                ids = product.get_id_by_cost(from_value, to_value)
+                result = tuple()
+                for item in ids:
+                    result += order.select_from("WHERE product_id=" + str(item))
 
         elif request.GET.get('optradio', None) == 'company':
-            ids = client.get_id_by_company(key_words)
+            key_words = key_words.strip(" ").split(",")
+            company_names = ""
+            for item in key_words:
+                company_names += "'" + item + "',"
+            company_names = company_names[:-1]
+            ids = client.get_id_by_company(company_names)
             result = tuple()
             for item in ids:
-                result += order.select_by_id(item)
+                result += order.select_from("WHERE client_id=" + str(item))
 
         else:
             condition += "\"" + key_words + "\""

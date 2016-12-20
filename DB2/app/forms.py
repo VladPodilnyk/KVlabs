@@ -20,4 +20,3 @@ class NewRecordForm(forms.Form):
     amount = forms.IntegerField(label='Amount')
 
 
-

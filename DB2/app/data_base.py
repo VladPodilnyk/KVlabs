@@ -152,8 +152,9 @@ class Product(AbstractClass):
     def get_choice_lst(self):
         return tuple(tuple([item['id'], item['name']]) for item in self.fetch_all())
 
-    def get_id_by_cost(self, cost):
-        return [item["id"] for item in self.select_from("WHERE cost=" + str(cost))]
+    def get_id_by_cost(self, from_value, to_value):
+        print "WHERE cost BETWEEN " + from_value + " AND " + to_value
+        return [item["id"] for item in self.select_from("WHERE cost BETWEEN " + from_value + " AND " + to_value)]
 
 
 class Stock(AbstractClass):
@@ -198,5 +199,6 @@ class Client(AbstractClass):
     def get_choice_lst(self):
         return tuple(tuple([item['id'], item['name']]) for item in self.fetch_all())
 
-    def get_id_by_company(self, company_name):
-        return [item["id"] for item in self.select_from("WHERE company=" + "'" + company_name + "'")]
+    def get_id_by_company(self, company_names):
+        print "WHERE company" + " IN " + "(" + company_names + ")"
+        return [item["id"] for item in self.select_from("WHERE company" + " IN " + "(" + company_names + ")")]
