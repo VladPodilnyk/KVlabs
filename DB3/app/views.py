@@ -2,13 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Order, Product, Stock, Client
 from .forms import OrderForm
-from django.utils.dateparse import parse_date
 from django.db.models import Q
-
-#order.load('orders.csv')
-#stock.load('stock.csv')
-#product.load('products.csv')
-#lient.load('clients.csv')
 
 
 def index(request):
@@ -53,12 +47,24 @@ def order_list(request):
 
 def edit(request, order_id):
     if request.method == 'POST':
-        prod_id = request.POST["product"]
-
         if 'delete_btn' in request.POST:
+            new_amount = Product.objects.get(id=request.POST["product"]).amount + int(request.POST["amount"])
+            Product.objects.filter(id=request.POST["product"]).update(amount=new_amount)
+            order = Order.objects.get(id=order_id)
+            order.delete()
             return HttpResponseRedirect('/')
-        
-        return HttpResponseRedirect('/')
+
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            row = {"product": Product.objects.get(id=request.POST["product"]),
+                   "client": Client.objects.get(id=request.POST["client"]), "data_time": request.POST["data_time"],
+                   "amount": request.POST["amount"]}
+            new_amount = Product.objects.get(id=request.POST["product"]).amount + \
+                         Order.objects.get(id=order_id).amount - int(request.POST["amount"])
+            Product.objects.filter(id=request.POST["product"]).update(amount=new_amount)
+            Order.objects.filter(id=order_id).update(**row)
+            return HttpResponseRedirect('/')
+
     order = Order.objects.get(id=order_id)
     form = OrderForm(instance=order)
     return render(request, "edit.html", {"order_form": form})
@@ -70,6 +76,8 @@ def make_new_order(request):
                "client": Client.objects.get(id=request.POST["client"]), "data_time": request.POST["data_time"],
                "amount": request.POST["amount"]}
 
+        new_amount = Product.objects.get(id=request.POST["product"]).amount - int(request.POST["amount"])
+        Product.objects.filter(id=request.POST["product"]).update(amount=new_amount)
         order = Order(**row)
         order.save()
         return HttpResponseRedirect('/')
