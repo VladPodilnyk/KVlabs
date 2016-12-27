@@ -35,3 +35,7 @@ class Order(models.Model):
     data_time = models.DateTimeField()
     amount = models.IntegerField()
 
+
+class OrderLog(models.Model):
+    num_order = models.IntegerField()
+    insert_time = models.DateTimeField()

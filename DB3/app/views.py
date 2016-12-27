@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Order, Product, Stock, Client
 from .forms import OrderForm
 from django.db.models import Q
+from .data_base import create_event, log_trigger, drop_trigger, drop_event, create_procedure
 
 
 def index(request):
@@ -10,6 +11,13 @@ def index(request):
 
 
 def order_list(request):
+
+    if request.method == 'POST' and 'minutes' in request.POST:
+        if request.POST['minutes'] != '':
+            create_event(request.POST['minutes'])
+        else:
+            print "kek"
+            drop_event()
 
     if ('search' in request.GET) and (request.GET != ''):
         key_words = request.GET['search']
@@ -30,7 +38,6 @@ def order_list(request):
 
         elif request.GET.get('optradio', None) == 'company':
             key_words = key_words.strip(" ").split(",")
-            print key_words
             result = Order.objects.filter(client__company__in=key_words)
 
         else:
@@ -48,6 +55,7 @@ def order_list(request):
 def edit(request, order_id):
     if request.method == 'POST':
         if 'delete_btn' in request.POST:
+            log_trigger()
             new_amount = Product.objects.get(id=request.POST["product"]).amount + int(request.POST["amount"])
             Product.objects.filter(id=request.POST["product"]).update(amount=new_amount)
             order = Order.objects.get(id=order_id)
@@ -71,6 +79,7 @@ def edit(request, order_id):
 
 
 def make_new_order(request):
+
     if request.method == 'POST':
         row = {"product":  Product.objects.get(id=request.POST["product"]),
                "client": Client.objects.get(id=request.POST["client"]), "data_time": request.POST["data_time"],
