@@ -48,6 +48,16 @@
                 <div class="page-header"><h1 style="text-align: center;">Orders</h1></div>
             {% endblock %}
 
+
+            <form class='form-inline' role="form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+               <label for="minutes" class="date_margin">Minutes to start event: </label>
+               <input id="minutes" class="form-control date_margin" type="number" name="minutes">
+            </div>
+            <button type="submit" class="btn btn-primary date_margin">Run Event</button>
+            </form>
+
             {% if orders %}
             <table class="table table-hover">
                 <thead>
