@@ -14,22 +14,24 @@
 #include <stdint.h>
 #include <pthread.h>
 
+#define TRUE 1
+#define FALSE 0
+#define dealloc_buffer() (sbrk(-g_buffer_size))
 
-typedef  enum { ALLOCATED, FREE } STATUS;
-
-typedef struct header {
-	size_t size;
-	STATUS is_free;
-	struct header *next;
-	struct header *prev;
-
+typedef struct {
+	unsigned int prev_block_size:31;
+	unsigned int is_free:1; 
+	unsigned int block_size:32;
 } header_t;
 
-extern header_t *head, *tail;
+//extern header_t *head, *tail;
+void *gp_to_buffer;
+extern size_t g_buffer_size;
 //pthread_mutex_t global_lock;
 
-header_t *get_free_block(size_t size);
-
+//
+int init_buffer();
+//void dealoc_buffer();
 // Function allocates memory and returns pointer
 void *mem_alloc(size_t size);
 
@@ -39,4 +41,5 @@ void *mem_realloc(void *addr, size_t size);
 // Frees allocated memory
 void mem_free(void *mem_block);
 
+// Prints memory map;
 void print_mem_map();

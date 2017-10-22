@@ -2,27 +2,25 @@
 
 int main() {
 	// some code here;
+	void *ptr1, *ptr2, *ptr3, *ptr4,*ptr5,*ptr6, *ptr;
+	init_buffer();
 	printf("%i\n", sizeof(header_t));
-	void *ptr;
-	void *ptr1 = mem_alloc(10);
-	void *ptr2 = mem_alloc(23);
-	void *ptr3 = mem_alloc(20);
-	void *ptr4 = mem_alloc(2);
-	void *ptr5 = mem_alloc(6);
+	ptr1 = mem_alloc(10);
+	ptr2 = mem_alloc(20);
+	ptr3 = mem_alloc(40);
+	//ptr4 = mem_alloc(3);
+	//ptr5 = mem_alloc(12);
+	//ptr6 = mem_alloc(25);
 	print_mem_map();
-	printf("\n\n");
-	mem_realloc(ptr2, 20);
+	printf("\n");
+	mem_realloc(ptr3, 2);
+	//mem_free(ptr1);
+	//mem_free(ptr3);
+	//print_mem_map();
+	//printf("\n");
+	//mem_free(ptr2);
 	print_mem_map();
-	printf("\n\n");
-	ptr = mem_realloc(ptr4, 10);
-	print_mem_map();
-	printf("\n\n");
-	mem_free(ptr2);
-	mem_free(ptr4);
-	mem_free(ptr3);
-	mem_free(ptr5);
-	mem_free(ptr1);
-	mem_free(ptr);
-	print_mem_map();
+	dealloc_buffer();
+	
     return 0;
 }

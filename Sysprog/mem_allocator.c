@@ -1,138 +1,117 @@
 #include "mem_allocator.h"
 
-header_t *head = NULL, *tail = NULL;
-pthread_mutex_t global_lock;
+size_t g_buffer_size = 1024 * 1024;
+
+int init_buffer() {
+	header_t *buffer;
+	gp_to_buffer = sbrk(g_buffer_size + 4);
+	if (buffer == (void*)-1) {
+		g_buffer_size = 0;
+		return -1;
+	}
+
+	gp_to_buffer = (void*)((size_t)gp_to_buffer + (4 - ((size_t)gp_to_buffer % 4)));
+	buffer = (header_t*)gp_to_buffer;
+	buffer->prev_block_size = 0;
+	buffer->is_free = TRUE;
+	buffer->block_size = g_buffer_size;
+	return 0;
+}
+
 
 void mem_free(void *mem_block) {
-	header_t *blk_header, *tmp;
-	void *program_break;
+	header_t *current_block, *prev_block, *next_block;
 
-	if (!mem_block)
-		return;
-	pthread_mutex_lock(&global_lock);
-	blk_header = (header_t*)mem_block - 1;
-	program_break = sbrk(0);
+	current_block = (header_t*)mem_block - 1;
+	prev_block = (header_t*)((size_t)current_block - current_block->prev_block_size);
+	next_block = (header_t*)((size_t)current_block + current_block->block_size);
 
-	if ((char*)mem_block + blk_header->size == program_break) {
-		if (head == tail) {
-			head = tail = NULL;
-		} 
-		else {
-			tail = tail->prev;
-			tail->next = NULL;
-			if (tail->is_free) {
-				if (head == tail) 
-					head = tail = NULL;
-				else {
-					blk_header->size += tail->size;
-					tail = tail->prev;
-					tail->next = NULL;
-				}
-				sbrk(-blk_header->size - 2*sizeof(header_t));
-				pthread_mutex_unlock(&global_lock);
-				return;
-			}
+	current_block->is_free = TRUE;
+	if ((current_block != prev_block) && ((size_t)prev_block >= (size_t)gp_to_buffer) 
+	&& (prev_block->is_free)) {
+		prev_block->block_size += current_block->block_size;
+		if ((size_t)next_block < (size_t)gp_to_buffer + g_buffer_size)
+			next_block->prev_block_size = prev_block->block_size;
+		current_block = prev_block;
+	}
+
+	if (((size_t)next_block < (size_t)gp_to_buffer + g_buffer_size) && (next_block->is_free)) {
+		current_block->block_size += next_block->block_size;
+		if ((size_t)next_block + next_block->block_size < (size_t)gp_to_buffer + g_buffer_size) {
+			next_block = (header_t*)((size_t)next_block + next_block->block_size);		
+			next_block->prev_block_size = current_block->block_size;
 		}
-
-		sbrk(-blk_header->size - sizeof(header_t));
-		pthread_mutex_unlock(&global_lock);
-		return;
 	}
-
-	blk_header->is_free = FREE;
-	if (blk_header->prev && blk_header->prev->is_free) {
-		tmp = blk_header;
-		blk_header = blk_header->prev;
-	}
-	else 
-		tmp = blk_header->next;
-
-	while (tmp->is_free) {
-		blk_header->size += tmp->size + sizeof(header_t);
-		tmp = tmp->next;
-	}
-	blk_header->next = tmp;
-	tmp->prev = blk_header;
-	pthread_mutex_unlock(&global_lock);
+	
 }
+
 
 void *mem_alloc(size_t size) {
-	size_t total_size;
-	void *mem_block;
-	header_t *blk_header;
-	if (!size)
-		return NULL;
-	pthread_mutex_lock(&global_lock);
-	blk_header = get_free_block(size);
+	header_t *current_block = (header_t*)gp_to_buffer;
+	header_t *next_block;
+	size_t old_block_size;
+	size_t header_size = sizeof(header_t);
+	size_t new_size = size + header_size;
 
-	if (blk_header) {
-		blk_header->is_free = ALLOCATED;
-		pthread_mutex_unlock(&global_lock);
-		return (void*)(blk_header + 1);
+	new_size = new_size + (4 - (new_size % 4));
+
+	while ((size_t)current_block < ((size_t)gp_to_buffer + g_buffer_size)) {
+		if ((current_block->is_free) && (current_block->block_size >= new_size)) {
+			if (current_block->block_size - new_size <= header_size)
+				new_size = current_block->block_size;
+
+			else {
+				printf("%i\n", current_block->block_size - new_size);
+				next_block = (header_t*)((size_t)current_block + new_size);
+				next_block->is_free = TRUE;
+				next_block->prev_block_size = new_size;
+				next_block->block_size = current_block->block_size - new_size;
+				if (((size_t)next_block + next_block->block_size) < ((size_t)gp_to_buffer + g_buffer_size)) {
+					next_block = (header_t*)((size_t)next_block + next_block->block_size);
+					next_block->prev_block_size = current_block->block_size - new_size;
+				}
+			}
+			current_block->is_free = FALSE;
+			current_block->block_size = new_size;
+			return (void*)(current_block + 1);
+		}
+		current_block = (header_t*)((size_t)current_block + current_block->block_size);
 	}
 
-	total_size = sizeof(header_t) + size;
-	mem_block = sbrk(total_size);
-	if (mem_block == (void*) -1) {
-		pthread_mutex_unlock(&global_lock);
-		return NULL;
-	}
-
-	blk_header = (header_t*)mem_block;
-	blk_header->size = size;
-	blk_header->is_free = ALLOCATED;
-	blk_header->next = NULL;
-	blk_header->prev = tail;
-	if (!head)
-		head = blk_header;
-	if (tail)
-		tail->next = blk_header;
-	tail = blk_header;
-	pthread_mutex_unlock(&global_lock);
-	return (void*)(blk_header + 1);
+	return NULL;
 }
 
+
 void *mem_realloc(void *addr, size_t size) {
-	header_t *blk_header;
-	void *new_block;
+	// Fix memory reallocation!!!
+	header_t *blk_header, *new_block;
 	if (!addr)
 		return mem_alloc(size);
 	
-	if (!size)
+	if (!size) {
+		mem_free(addr);
 		return NULL;
+	}
 
-	blk_header = (header_t*)addr - 1;
-	if (blk_header->size >= size)
-		return addr;
-
-	new_block = mem_alloc(size);
+	new_block = (header_t*)mem_alloc(size);
+	blk_header = new_block - 1;
 	if (new_block) {
-		memcpy(new_block, addr, blk_header->size);
+		memcpy((void*)new_block, addr, blk_header->block_size - sizeof(header_t));
 		mem_free(addr);
 	}
 
-	return new_block;
+	return (void*)new_block;
 }
 
 
 /* A debug function to print the entire link list */
-void print_mem_map()
-{
-	header_t *curr = head;
-	printf("head = %p, tail = %p \n", (void*)head, (void*)tail);
-	while(curr) {
-		printf("addr = %p, size = %zu, is_free=%u, next=%p\n",
-			(void*)curr, curr->size, curr->is_free, (void*)curr->next);
-		curr = curr->next;
+void print_mem_map() {
+	header_t *curr = (header_t*)gp_to_buffer;
+	size_t tail = (size_t)gp_to_buffer + g_buffer_size;
+	printf("head = %p, tail = %p \n", (void*)gp_to_buffer, (void*)((size_t)gp_to_buffer + g_buffer_size));
+	while((size_t)curr < tail) {
+		printf("addr = %p, size = %zu, is_free=%u, prevbsize=%u\n",
+			(void*)curr, curr->block_size, curr->is_free, curr->prev_block_size);
+		curr = (header_t*)((size_t)curr + curr->block_size);
 	}
-}
-
-header_t *get_free_block(size_t size) {
-	header_t *curr = head;
-	while(curr) {
-		if (curr->is_free && curr->size >= size)
-			return curr;
-		curr = curr->next;
-	}
-	return NULL;
 }
